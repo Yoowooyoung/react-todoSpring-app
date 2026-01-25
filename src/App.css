@@ -1,0 +1,6 @@
+/*메인 컨테이너 흰색 사각형, 중앙에 위치 */
+.main-container {
+  margin: 0 auto;
+  max-width: 1280px;
+  width: 90%;
+}
