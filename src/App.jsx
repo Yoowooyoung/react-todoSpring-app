@@ -13,9 +13,10 @@ function App() {
         setBook(data);
       })
     };
+
     // 도서 특정 조회
     const [findId, setFindId] = useState("")
-    const hanldeSubmit =(e)=> {
+    const handleSubmit =(e)=> {
       e.preventDefault();
       const getId = Number(findId)
       fetch(`/api/books/${getId}`)
@@ -91,7 +92,7 @@ function App() {
       </div>
     </form>
 
-    <form onSubmit={hanldeSubmit}>
+    <form onSubmit={handleSubmit}>
       <div>
         <input 
           type="text"
