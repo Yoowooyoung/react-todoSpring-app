@@ -11,6 +11,8 @@ const TodoList = ({
 }) => {
   return (
     <ul className="list">
+      {/* filter: return값이 true, false */}
+      {/* map: 새로운 형태로 변환  */}
       {todos.map((todo) => {
         return (
           <TodoItem

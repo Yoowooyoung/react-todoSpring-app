@@ -53,14 +53,14 @@ const App = () => {
 
     // 완료/미완료 버튼 함수
     const completeButton=(id)=> {
-      // map: react 배열 내장 함수
+      // map: 배열 메소드
       const newTodos = todos.map((todo) => 
         todo.id === id 
               ? { ...todo, comBtn: !todo.comBtn }
               : todo
           )
           // const clickedAfter = newTodos.filter(todo => todo.id === id)[0]
-          //     console.log(clickedAfter.comBtn ? "완료입니다" : "미완료입니다")
+          //console.log(clickedAfter.comBtn ? "완료입니다" : "미완료입니다")
             setTodos(newTodos)
      }
 
