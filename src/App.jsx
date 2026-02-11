@@ -1,91 +1,135 @@
-import { useState } from "react"
-import "./App.css"
-import TodoForm from "./components/TodoForm/TodoForm"
-import TodoList from './components/TodoList/TodoList'
+import { useState } from "react";
+import './App.css'
+import { MdEdit, MdDelete } from 'react-icons/md'
 
-const App = () => {
-  
-  // 할일 이름, 할일 이름 저장
-  const [todoName, setTodoName] = useState("")
+function App() {
+  const [book, setBook] = useState([]);
 
-  // 기존에 있던 할일들, 새로운 할일
-  // useState: 배열을 return해주는 함수
-  const [todos, setTodos] = useState([   // todos를 바꾸는 setTodos함수
-    // 1번_todo 객체
-    {id: 1, todoName: "8시 기상", comBtn: false}, // 기존 존해하는 할일, 완료/미완료 여부
-    // 2번_todo 객체
-    {id: 2, todoName: "10시 외출하기", comBtn: false},
-  ])
-  
-  // 현재 입력값을 state에 저장함
-  const writeTodoName =(e)=> {  // event
-    // 콘솔창에 입력된 내용 출력
-    console.log(e.target.value)
-    // 출력된 내용 setTodoName에 저장
-    setTodoName(e.target.value)
+    // 도서 전체 조회
+    const handleGetBooks =()=> {
+    fetch('/api/books') 
+      .then(response => response.json())
+      .then(data => {
+        setBook(data);
+      })
+    };
+    // 도서 특정 조회
+    const [findId, setFindId] = useState("")
+    const hanldeSubmit =(e)=> {
+      e.preventDefault();
+      const getId = Number(findId)
+      fetch(`/api/books/${getId}`)
+      .then((response) => response.json())  // 요청을 받았는지 확인용
+      .then((data) => {       // 실제 데이터
+        setBook([data]);
+        setFindId("")
+      })
+    };
+
+    // 도서 삭제
+  const handleDelete =(id)=>{
+    fetch(`/api/books/${id}`, {
+      method: 'DELETE'
+    })
+    .then((response) => {
+      if(response.ok) {
+      setBook((restBook) => restBook.filter((item) => item.id !== id))
+    }})
   }
-  // 할일 제출 함수
-  const handleSubmit =(e)=> {   // e는 매개변수
-    e.preventDefault()
-    if(todoName !== "") {// Todo 이름이 비어있다면 수정, 아니면 새로운 Todo배열객체 생성
-      {
-        const newTodo = {
-          id: crypto.randomUUID(),
-          todoName: todoName,
-          comBtn: false,
-        }
-      const newTodos = [...todos, newTodo]  // 기존의 expenses에 newExpense 추가 -> newExpenses객체 생성,   
-      // ...-> 기존의 todos에 있던 내용들 저장해놓기 위해서
-      setTodos(newTodos)  // 마지막으로 생성된 Todos를 setTOdos에 저장
-      console.log(newTodo)
-      }
-    }
-    setTodoName("")
+ 
+    // 도서 추가
+    const [bookTitle, setBookTitle] = useState("");
+    const [bookAuthor, setBookAuthor] = useState("");
+    const [bookIsbn, setBookIsbn] = useState("");
+    const [bookPublishedDate, setBookPublishedDate] = useState("");
+    const handlePOST =()=> {
+    fetch('/api/books', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }, // 2. "나 JSON 보낸다!"
+      body: JSON.stringify({ title: bookTitle, author: bookAuthor, 
+        isbn: bookIsbn, publishedDate: bookPublishedDate }) // 3. 보낼 내용
+      })
+    .then(res => res.json());
   }
 
-    // 할일 list 삭제 로직
-    const deleteButton=(id)=> {
-      const newTodos = todos.filter((todo) => 
-        todo.id !== id
-      )
-      setTodos(newTodos)
-    }
-
-    // 완료/미완료 버튼 함수
-    const completeButton=(id)=> {
-      // map: 배열 메소드
-      const newTodos = todos.map((todo) => 
-        todo.id === id 
-              ? { ...todo, comBtn: !todo.comBtn }
-              : todo
-          )
-          // const clickedAfter = newTodos.filter(todo => todo.id === id)[0]
-          //console.log(clickedAfter.comBtn ? "완료입니다" : "미완료입니다")
-            setTodos(newTodos)
-     }
-
-    // 다른 컴포넌트에 값 반환
+      
   return (
-    <main className="main-container">
-      <h1>할 일 기록하기</h1>
-        <div style={{ width: '100%', backgroundColor: 'white', padding: '2rem'}}>
-          <TodoForm   // TodoForm컴포넌트로 props전달
-            writeTodoName={writeTodoName}
-            handleSubmit={handleSubmit}
-            todoName={todoName}
-          />
-        </div>
-        <div style={{ width: '100%', backgroundColor: 'white', padding: '2rem'}}>
-          <TodoList 
-            todos={todos}
-             // editButton={editButton}
-             deleteButton={deleteButton}
-             completeButton={completeButton}
-          />
-        </div>
-    </main>
-  )
+  <div>
+    <h1>서버 응답 결과</h1>
+    <button onClick={handleGetBooks}>조회하기</button><br/>
+    <form>
+      <div>
+          <input 
+            type="text"
+            placeholder="제목"
+            id="title"
+            value={bookTitle}
+            onChange={(e)=>{setBookTitle(e.target.value)}}
+            />
+            <input 
+            type="text"
+            placeholder="저자"
+            id="bookAuthor"
+            value={bookAuthor}
+            onChange={(e)=>{setBookAuthor(e.target.value)}}
+            />
+            <input 
+            type="number"
+            placeholder="isbn"
+            id="bookIsbn"
+            value={bookIsbn}
+            onChange={(e)=>{setBookIsbn(e.target.value)}}
+            />
+            <input 
+            type="date"
+            placeholder="출판날짜"
+            id="BookPublishedDate"
+            value={bookPublishedDate}
+            onChange={(e)=>{setBookPublishedDate(e.target.value)}}
+            />
+          <button onClick={handlePOST}>등록하기</button><br/>
+      </div>
+    </form>
+
+    <form onSubmit={hanldeSubmit}>
+      <div>
+        <input 
+          type="text"
+          id="findId"
+          value={findId}
+          onChange={(e)=>{setFindId(e.target.value)}}
+          placeholder="ID"/>
+        <button>
+            ID 조회하기
+          </button>
+      </div>
+    </form>
+
+    <div>
+      {book.map((book) => (
+        <li className='item' key={book.id}>
+          <div className='info'>
+            <span>ID: {book.id} </span>
+            <span>제목: {book.title}</span>
+            <span>저자: {book.author}</span>
+            <span>isbn: {book.isbn}</span>
+            <span>출판날짜: {book.publishedDate}</span>
+          </div>
+          <div>
+            <button
+              className='edit-btn'>
+              <MdEdit />
+            </button>
+            <button
+              className='delete-btn'
+              onClick={()=>{handleDelete(book.id)}}>
+              <MdDelete />
+            </button>
+          </div>
+        </li>
+      ))}
+    </div>
+  </div>
+);
 }
-
-
-export default App
+export default App;

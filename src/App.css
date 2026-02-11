@@ -4,3 +4,69 @@
   max-width: 1280px;
   width: 90%;
 }
+
+.item {
+    background-color: var(--mainWhite);
+    line-height: 1.5rem;
+    padding: 10px 20px;
+    margin-bottom: 1rem;
+    border: 1px solid #e0e0e0;
+    display: flex;
+    /* 지출항목, [수정, 삭제] 간격 띄우기 */
+    justify-content: space-between;
+    transition: all 0.3s linear;
+}
+
+.item:hover {
+    width: 100%;
+    transform: scale(1.02);
+}
+
+.info {
+    flex: 0 0 60%;
+    display: flex;
+    /* 지출항목, 비용 간격 띄우기 */
+    justify-content: space-between;
+}
+
+.btn-group {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* 원하는 간격: 6~16px 사이로 조절 */
+}
+ /* 삭제 버튼 */
+.delete-btn {
+  width: 88px;       /* 고정 너비 */
+  height: 36px;      /* 고정 높이 */
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 6px;
+
+  font-size: 1.2rem;
+  cursor: pointer;
+  outline: none;
+
+  /* 색깔 */
+  background: #cc5252;
+  color: #0b1a0e;
+}
+.delete-btn,
+.edit-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    outline: none;
+    cursor: pointer;
+}
+
+.delete-btn {
+    color: var(--mainRed);
+}
+
+.edit-btn {
+    color: var(--mainGreen);
+}

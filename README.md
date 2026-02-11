@@ -1,5 +1,6 @@
 Todo 앱 만들기 프로젝트 <br>
 
-#실행방법 
-1. npm install <br>
-2. npm run start
+Spring boot와 연동<br>
+
+React: react-todo-app<br>
+Spring boot: bookapi
