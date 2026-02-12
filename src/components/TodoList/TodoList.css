@@ -3,3 +3,15 @@
     border: none;
     padding: 0;
 }
+
+.form-input {
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid var(--secondColor);
+    outline: none;
+    height: 30px;
+    width: 100px;
+    font-size: 16px;
+    margin: 0 0 8px 0;
+    padding: 0;
+}

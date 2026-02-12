@@ -1,23 +1,45 @@
-import React from 'react'
 import './TodoForm.css'
 
 const TodoForm = ({
-    handleSubmit,
+    handlePOST,
+    content,
+    createdAt,
+    handleContent,
+    handleCreatedAt,
 
-    
 }) => {
+
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handlePOST}>
+      <div className='form-center'>
+        <div className='form-group'>
+          <label htmlFor='content'>내용</label>
+          <input 
+            type="text"
+            placeholder="내용"
+            className='form-control'
+            id="content"
+            value={content}
+            onChange={handleContent}
+            />
+        </div>
+        <div className='form-group'>
+          <label htmlFor='createdAt'>생성날짜</label>
+          <input 
+            type="date"
+            placeholder="출판날짜"
+            className='form-control'
+            id="createdAt"
+            value={createdAt}
+            onChange={handleCreatedAt}
+          />
+        </div>
+      </div>
       <div>
-        <input 
-          type="text"
-          id="findId"
-          value={findId}
-          onChange={(e)=>{setFindId(e.target.value)}}
-          placeholder="ID"/>
-        <button>
-            ID 조회하기
-          </button>
+        <button 
+          className='btn'>
+          등록하기
+        </button><br/>
       </div>
     </form>
   )

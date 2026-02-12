@@ -2,38 +2,57 @@ import React from 'react'
 import TodoItem from '../TodoItem/TodoItem'
 import './TodoList.css';
 
-// app컴포넌트에서 배열객체를 props받고 
-// 이를 하나씩 TodoItem컴포넌트로 props내림
 const TodoList = ({
-  todos,
-  deleteButton,
-  completeButton,
+  bookAry,  
+  handleGET,  // 도서 전체 조회
+  handleGetId,  // id 조회
+  getId,
+  onChangeId,
+  handleDelete,   // 삭제
+  putComplete,    // 수정
 }) => {
-  return (
-    <ul className="list">
-      {/* filter: return값이 true, false */}
-      {/* map: 새로운 형태로 변환  */}
-      {todos.map((todo) => {
-        return (
-          <TodoItem
-              todo={todo}
-              key={todo.id}
-              deleteButton={deleteButton}
-              completeButton={completeButton}
-         />
-        )
-      })}
 
-    </ul>
+  return (
+    <React.Fragment>
+      <div>
+        <button
+          className='btn'
+          onClick={handleGET}
+        >
+          전체 조회
+        </button>
+        <br/>
+      </div>
+      <div>
+        <input 
+          type="number"
+          placeholder="조회 Id"
+          className='form-input'
+          id="GetId"
+          value={getId}
+          onChange={onChangeId}
+        />
+        <button
+          className='btn'
+          onClick={handleGetId}
+        >
+        ID 조회
+        </button>
+      </div>
+      <ul className="list">
+        {bookAry.map((book) => {
+          return (
+            <TodoItem
+              book={book}
+              key={book.id}
+              handleDelete={handleDelete}
+              putComplete={putComplete}
+            />
+          )
+        })}
+      </ul>
+    </React.Fragment>
   )
 }
 
 export default TodoList
-
-
-
-const persons =(name)=>{
-  const newPersons = persons.map((person)=>
-  person.name === name)
-  setPerson(newPersons)
-}

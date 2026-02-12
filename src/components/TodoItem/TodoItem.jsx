@@ -2,42 +2,36 @@ import React from 'react'
 import './TodoItem.css'
 
 const TodoItem = ({
-  todo,
-  // EditButton,
-  deleteButton,
-  completeButton,
-}
-) => {
+  book,
+  handleDelete,   // 삭제
+  // 완료 여부
+  putComplete,    // 완료 여부
+}) => {
+
   return (
     <li className='item'>
-      <div className='list'>
+      <div className='info'>
         <span>
-          {todo.todoName}
+          할 일: {book.content}
+        </span>
+        <span>
+          생성 날짜: {book.createdAt}
         </span>
       </div>
-      <div className='btn-group'>
-          <input
-            type='checkbox'
-            checked={todo.comBtn}   // 제어 컴포넌트 
-            onChange={() => completeButton(todo.id)}  // onChange: event handling, 값의 변화-> onChange사용
-          />
-          완료 여부
-        {/* <button */}
-          {/* className={todo.comBtn ? "complete-btn_comBtn" : "complete-btn"} */}
-          {/* onClick={() => completeButton(todo.id)} */}
-          {/* // 완료/미완료 버튼 클릭 시 */}
-          {/* // completeButton함수에 todo.id 반환 */}
-        {/* > */}
-           {/* {todo.comBtn ? "완료" : "미완료"} */}
-            {/*todo.comBtn이 true면 완료 버튼, false면 미완료 버튼*/}
-        {/* </button> */}
+      <div>
+        완료 여부
+        &nbsp;
+        <input
+          type='checkbox'
+          name='completeBtn'
+          checked={book.completed}
+          onChange={() => putComplete(book.id, book.completed)}
+        />
+      </div>
+      <div>
         <button
           className='delete-btn'
-          onClick={() => deleteButton(todo.id)}
-          // ()=>: 익명함수, 익명함수 내부에서 deleteButton(todo.id)함수를 실행, 
-          // deleteButton함수를 호출함
-          // deleteButton함수를 onClick에 걸어둠
-          // app.js의 deleteButton함수에 todo.id 전달
+          onClick={() => handleDelete(book.id)}
         >
           삭제
         </button>
