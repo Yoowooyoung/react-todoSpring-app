@@ -1,16 +1,23 @@
 import './App.css'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import ExpenseForm from './components/TodoForm/TodoForm';
 import ExpenseList from "./components/TodoList/TodoList";
-import { useBeforeunload } from 'react-beforeunload';
 
 function App() {
 
   const [bookAry, setBookAry] = useState([]);
-  const [bookAryCopy, setBookAryCopy] = useState([]);   // id 조회 시 사용
+  const [bookAryTotal, setBookAryTotal] = useState([]);   // 전체 요소
   const [content, setContent] = useState("");
   const [createdAt, setCreatedAt] = useState("");
-    
+
+    // 처음 사이트로 들어왔을 때
+    fetch('/api/todos')
+      .then(response => response.json())
+      .then(data => {
+      setBookAry(data)
+      setBookAryTotal(data)
+      })
+
     // 도서 추가
     const handleContent =(e)=> {  // 내용 입력
       setContent(e.target.value)
@@ -20,17 +27,17 @@ function App() {
     }
     const handlePOST =(e)=> {   // 할 일 추가
       e.preventDefault();
-        if(content !== "" && createdAt !== "") {  // 빈값 차단  할 일 추가/생성
-          fetch('/api/todos', {   // fetch
+        if(content !== "" && createdAt !== "") {
+          fetch('/api/todos', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' }, // 2. "나 JSON 보낸다!"
+            headers: { 'Content-Type': 'application/json' }, // 2. "나 JSON 보낸다"
             body: JSON.stringify({ content: content, completed: false, createdAt: createdAt }) // 3. 보낼 내용
           })
           .then(res => res.json())
           .then(data => {
-            const everyAry = [...bookAry, data]
+            const everyAry = [...bookAry, data]   // 추가한 todo 바로 화면에 보이게
             setBookAry(everyAry)
-            setBookAryCopy(everyAry)
+            setBookAryTotal(everyAry)
             setContent("")
             setCreatedAt("")
           })
@@ -38,14 +45,6 @@ function App() {
           alert("빈 내용입니다.")
         }
       }
-      
-      // 처음 사이트로 들어왔을 때
-      fetch('/api/todos')
-          .then(response => response.json())
-          .then(data => {
-            setBookAry(data)
-            setBookAryCopy(data)
-          })
 
     const handleGET =(e)=> {    // 도서 전체 조회
       e.preventDefault();
@@ -56,22 +55,20 @@ function App() {
           setBookAry(data)
           setBookAryCopy(data)
         })
+        alert("할 일이 존재합니다.")
       } else {
         alert("할 일이 없습니다.")
       }
     }
 
     const [getId, setGetId] = useState("");   // 도서 Id 조회
-
     const onChangeId =(e) => {
       setGetId(e.target.value)
       console.log("bookAry내용", bookAry)
     }
     const handleGetId =()=> {
       const findId = Number(getId);
-      console.log(getId)
-      console.log(bookAry.map((book) => book.id))
-      if(bookAryCopy.find((book) => Number(book.id) === Number(getId))) {
+      if(bookAryCopy.find((book) => Number(book.id) === Number(getId))) {   // 숫자로 변환해줘야 숫자간 비교 가능
       fetch(`/api/todos/${findId}`)
         .then(response => response.json())
         .then(data => {
@@ -84,14 +81,14 @@ function App() {
       }
     }
 
-    const putComplete =(id, completed)=> {    // 완료 여부
+    const putComplete =(id, completed)=> {    // 완료 여부(checkbox)
 
       const completedId = Number(id);
       const targetBook = bookAry.find((book) => book.id === completedId);
 
       fetch(`/api/todos/${completedId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' }, // 2. "나 JSON 보낸다!"
+        headers: { 'Content-Type': 'application/json' }, // 2. "나 JSON 보낸다"
         body: JSON.stringify({content: targetBook.content, completed: !completed, 
           createdAt: targetBook.createdAt
         })
@@ -110,7 +107,7 @@ function App() {
       })
     }
   
-    const handleDelete=(id)=> {   // 할일 삭제
+    const handleDelete=(id)=> {   // 할 일 삭제
       const deleteId = Number(id)
       fetch(`/api/todos/${deleteId}`, {
         method: 'DELETE'
@@ -124,7 +121,7 @@ function App() {
 
   return (
     <main className="main-container">   
-      <h1> 예산 계산기</h1>
+      <h1>플래너</h1>
       <div style={{ width: '100%', backgroundColor: 'white', padding: '1rem'}}>
         <ExpenseForm 
           handlePOST={handlePOST}
