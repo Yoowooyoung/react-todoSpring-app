@@ -1,11 +1,13 @@
 import './App.css'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ExpenseForm from './components/TodoForm/TodoForm';
 import ExpenseList from "./components/TodoList/TodoList";
+import { useBeforeunload } from 'react-beforeunload';
 
 function App() {
 
   const [bookAry, setBookAry] = useState([]);
+  const [bookAryCopy, setBookAryCopy] = useState([]);   // id 조회 시 사용
   const [content, setContent] = useState("");
   const [createdAt, setCreatedAt] = useState("");
     
@@ -16,11 +18,10 @@ function App() {
     const handleCreatedAt =(e)=> {  // 날짜 입력
       setCreatedAt(e.target.value)
     }
-    const handlePOST =(e)=> {
+    const handlePOST =(e)=> {   // 할 일 추가
       e.preventDefault();
-
-        if(content !== "" && createdAt !== "") {  // 빈값 차단
-          fetch('/api/books', {   // fetch
+        if(content !== "" && createdAt !== "") {  // 빈값 차단  할 일 추가/생성
+          fetch('/api/todos', {   // fetch
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }, // 2. "나 JSON 보낸다!"
             body: JSON.stringify({ content: content, completed: false, createdAt: createdAt }) // 3. 보낼 내용
@@ -29,6 +30,7 @@ function App() {
           .then(data => {
             const everyAry = [...bookAry, data]
             setBookAry(everyAry)
+            setBookAryCopy(everyAry)
             setContent("")
             setCreatedAt("")
           })
@@ -36,37 +38,58 @@ function App() {
           alert("빈 내용입니다.")
         }
       }
+      
+      // 처음 사이트로 들어왔을 때
+      fetch('/api/todos')
+          .then(response => response.json())
+          .then(data => {
+            setBookAry(data)
+            setBookAryCopy(data)
+          })
 
     const handleGET =(e)=> {    // 도서 전체 조회
       e.preventDefault();
-      fetch('/api/books')
+      if(bookAry.length !== 0) {
+      fetch('/api/todos')
         .then(response => response.json())
         .then(data => {
           setBookAry(data)
-          console.log(data)
+          setBookAryCopy(data)
         })
+      } else {
+        alert("할 일이 없습니다.")
+      }
     }
-  
+
     const [getId, setGetId] = useState("");   // 도서 Id 조회
+
     const onChangeId =(e) => {
       setGetId(e.target.value)
+      console.log("bookAry내용", bookAry)
     }
     const handleGetId =()=> {
       const findId = Number(getId);
-      fetch(`/api/books/${findId}`)
+      console.log(getId)
+      console.log(bookAry.map((book) => book.id))
+      if(bookAryCopy.find((book) => Number(book.id) === Number(getId))) {
+      fetch(`/api/todos/${findId}`)
         .then(response => response.json())
         .then(data => {
           setBookAry([data])
           setGetId("")
         })
+      } else {
+        alert("id가 " + getId + "인 할 일은 없습니다.")
+        setGetId("")
+      }
     }
 
     const putComplete =(id, completed)=> {    // 완료 여부
 
       const completedId = Number(id);
-      const targetBook = bookAry.find(book => book.id === completedId);
+      const targetBook = bookAry.find((book) => book.id === completedId);
 
-      fetch(`/api/books/${completedId}`, {
+      fetch(`/api/todos/${completedId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' }, // 2. "나 JSON 보낸다!"
         body: JSON.stringify({content: targetBook.content, completed: !completed, 
@@ -89,7 +112,7 @@ function App() {
   
     const handleDelete=(id)=> {   // 할일 삭제
       const deleteId = Number(id)
-      fetch(`/api/books/${deleteId}`, {
+      fetch(`/api/todos/${deleteId}`, {
         method: 'DELETE'
       })
       .then(response => {

@@ -12,6 +12,9 @@ const TodoItem = ({
     <li className='item'>
       <div className='info'>
         <span>
+          id: {book.id}
+        </span>
+        <span>
           할 일: {book.content}
         </span>
         <span>
