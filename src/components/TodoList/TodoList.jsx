@@ -3,7 +3,7 @@ import TodoItem from '../TodoItem/TodoItem'
 import './TodoList.css';
 
 const TodoList = ({
-  todoAry,
+  todos,
   handleGET,  // 도서 전체 조회
   handleGetId,  // id 조회
   getId,
@@ -40,7 +40,7 @@ const TodoList = ({
         </button>
       </div>
       <ul className="list">
-        {todoAry.map((todo) => {
+        {todos.map((todo) => {
           return (
             <TodoItem
               todo={todo}

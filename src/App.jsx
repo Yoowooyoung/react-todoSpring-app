@@ -6,8 +6,8 @@ import axios from 'axios';
 
 function App() {
 
-  const [todoAry, setTodoAry] = useState([]);
-  const [alwaysTodoAry, setAlwaysTodoAry] = useState([]);   // 항상 전체 요소
+  const [todos, setTodos] = useState([]);
+  const [FullTodos, setFullTodos] = useState([]);   // 항상 전체 요소
   const [content, setContent] = useState("");
   const [createdAt, setCreatedAt] = useState("");
 
@@ -16,8 +16,8 @@ function App() {
       // .then(response => response.json())
       .then(response => {
         // console.log("전체 할 일", response);
-        setTodoAry(response.data);
-        setAlwaysTodoAry(response.data);
+        setTodos(response.data);
+        setFullTodos(response.data);
       })
   }, []);   // 처음 사이트 방문 시 빈배열이므로 실행
 
@@ -29,7 +29,7 @@ function App() {
     //     )
     //   .then(data => {
     //     // console.log("전체 할 일", data);
-    //   setTodoAry(data)
+    //   setTodos(data)
     //   setAlwaysTodoAry(data)
     //   })
     // }, []);
@@ -49,14 +49,14 @@ function App() {
             completed: false,
             createdAt: createdAt,
             // method: 'POST',
-            headers: { 'Content-Type': 'application/json' }, // 2. "나 JSON 보낸다"
+            headers: { 'Content-Type': 'application/json' }, // "나 JSON 보낸다"
             // body: JSON.stringify({ content: content, completed: false, createdAt: createdAt }) // 3. 보낼 내용
           })
           // .then(response => response.json())
             .then(response => {
-              const alwaysAry = [...todoAry, response.data]   // 추가한 todo 바로 화면에 보이게
-              setTodoAry(alwaysAry)
-              setAlwaysTodoAry(alwaysAry)
+              const postTodos = [...todos, response.data]   // 추가한 todo 바로 화면에 보이게
+              setTodos(postTodos)
+              setFullTodos(postTodos)
               setContent("")
               setCreatedAt("")
             })
@@ -67,15 +67,15 @@ function App() {
 
     const handleGET = (e) => {    // 도서 전체 조회
       e.preventDefault();
-      if(alwaysTodoAry.length !== 0) {
+      if(FullTodos.length !== 0) {    // true: FullTodos에 요소가 0개가 아닌 경우
       axios.get("http://localhost:8080/api/todos")
         // .then(response => response.json())
         .then(response => {
-          console.log(response.data)
-          setTodoAry(response.data)
-          setAlwaysTodoAry(response.data)
+          console.log("전체 조회_response.data", response.data)
+          setTodos(response.data)
+          setFullTodos(response.data)
         })
-      } else {
+      } else {    // false: FullTodos에 요소가 0개인 경우
         alert("할 일이 없습니다.")
       }
     }
@@ -86,25 +86,27 @@ function App() {
     }
     const handleGetId =()=> {
       const findId = Number(getId);
-      // console.log(getId);
-      if(alwaysTodoAry.find((todo) => Number(todo.id) === Number(getId))) {   // 숫자로 변환해줘야 숫자간 비교 가능
+      if(FullTodos.find((todo) => String(todo.id) === (getId))) {   // 숫자로 변환해줘야 숫자간 비교 가능
+        console.log("getId 타입", typeof(getId))
         axios.get(`http://localhost:8080/api/todos/${findId}`)
         // .then(response => respnse.JSON())
         .then(response => {
           // console.log("response", response)
           // console.log("id 조회 데이터", response.data)
-          setTodoAry([response.data])
+          setTodos([response.data])
           setGetId("")
         })
       } else {
         alert("id가 " + getId + "인 할 일은 없습니다.")
+        console.log("getId 타입", typeof(getId))
+        console.log("getId", getId)
         setGetId("")
       }
     }
 
     const putComplete = (id, completed) => {    // 완료 여부(checkbox)
       const completedId = Number(id);
-      const findTodo = todoAry.find((todo) => todo.id === completedId);
+      const findTodo = todos.find((todo) => todo.id === completedId);
       axios.put(`http://localhost:8080/api/todos/${completedId}`, {
         content: findTodo.content,    // 내용과 날짜는 그대로 완료여부만 반대로
         completed: !completed,
@@ -116,7 +118,7 @@ function App() {
         // })
       }) 
       .then((response) => {
-        const afterTodoAry = todoAry.map((todo) => {
+        const afterTodoAry = todos.map((todo) => {
           // console.log("put_todo", todo)
           if (todo.id === completedId) {
             return response.data; 
@@ -124,7 +126,7 @@ function App() {
             return todo;
           }
         });
-        setTodoAry(afterTodoAry)
+        setTodos(afterTodoAry)
       })
     }
   
@@ -134,16 +136,16 @@ function App() {
       })
       .then(response => 
           // setTodoAry((todoAry) => todoAry.filter((item) => item.id !== deleteId))
-      {
-        alert(response.data.content + "를 삭제하였습니다.")
-        const afterTodoArray = todoAry.filter(todo => {
+        {
+          alert(response.data.content + "를 삭제하였습니다.")
+          const afterTodoArray = todos.filter(todo => {
             if(todo.id !== response.data.id) {
               return todo
             }
           })
-          setTodoAry(afterTodoArray)
-      }
-    )
+          setTodos(afterTodoArray)
+        }
+      )
     }
 
     // const handleDelete=(id)=> {   // 할 일 삭제
@@ -171,8 +173,7 @@ function App() {
           handleCreatedAt={handleCreatedAt}
         />
         <ExpenseList 
-        
-          todoAry={todoAry}
+          todos={todos}
           handleGET={handleGET}
           // id 조회
           handleGetId={handleGetId}
