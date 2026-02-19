@@ -54,7 +54,6 @@ function App() {
       if(FullTodos.length !== 0) {
       axios.get("http://localhost:8080/api/todos")
         .then(response => {
-          console.log("전체 조회_response.data", response.data)
           setTodos(response.data)
           setFullTodos(response.data)
         })
@@ -91,7 +90,6 @@ function App() {
       }) 
       .then((response) => {
         const afterTodoAry = todos.map((todo) => {
-          // console.log("put_todo", todo)
           if (todo.id === completedId) {
             return response.data; 
           } else {
