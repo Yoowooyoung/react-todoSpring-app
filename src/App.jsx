@@ -11,7 +11,7 @@ function App() {
   const [content, setContent] = useState("");
   const [createdAt, setCreatedAt] = useState("");
 
-    useEffect(() => {   // 처음 사이트로 들어왔을 때
+  useEffect(() => {   // 처음 사이트로 들어왔을 때
     axios.get("http://localhost:8080/api/todos")
       // .then(response => response.json())
       .then(response => {
@@ -35,13 +35,13 @@ function App() {
     // }, []);
 
     // 도서 추가
-    const handleContent =(e)=> {  // 내용 입력
+    const handleContent = (e) => {  // 내용 입력
       setContent(e.target.value)
     }
-    const handleCreatedAt =(e)=> {  // 날짜 입력
+    const handleCreatedAt = (e) => {  // 날짜 입력
       setCreatedAt(e.target.value)
     }
-    const handlePOST =(e)=> {   // 할 일 추가
+    const handlePOST = (e) => {   // 할 일 추가
       e.preventDefault();
         if(content !== "" && createdAt !== "") {
           axios.post("http://localhost:8080/api/todos", {
@@ -53,19 +53,19 @@ function App() {
             // body: JSON.stringify({ content: content, completed: false, createdAt: createdAt }) // 3. 보낼 내용
           })
           // .then(response => response.json())
-          .then(response => {
-            const alwaysAry = [...todoAry, response.data]   // 추가한 todo 바로 화면에 보이게
-            setTodoAry(alwaysAry)
-            setAlwaysTodoAry(alwaysAry)
-            setContent("")
-            setCreatedAt("")
-          })
+            .then(response => {
+              const alwaysAry = [...todoAry, response.data]   // 추가한 todo 바로 화면에 보이게
+              setTodoAry(alwaysAry)
+              setAlwaysTodoAry(alwaysAry)
+              setContent("")
+              setCreatedAt("")
+            })
         } else {
           alert("빈 내용입니다.")
         }
       }
 
-    const handleGET =(e)=> {    // 도서 전체 조회
+    const handleGET = (e) => {    // 도서 전체 조회
       e.preventDefault();
       if(alwaysTodoAry.length !== 0) {
       axios.get("http://localhost:8080/api/todos")
@@ -81,15 +81,15 @@ function App() {
     }
 
     const [getId, setGetId] = useState("");   // 할 일 Id 조회
-    const onChangeId =(e) => {
+    const onChangeId = (e) => {
       setGetId(e.target.value)
     }
     const handleGetId =()=> {
       const findId = Number(getId);
       // console.log(getId);
       if(alwaysTodoAry.find((todo) => Number(todo.id) === Number(getId))) {   // 숫자로 변환해줘야 숫자간 비교 가능
-      axios.get(`http://localhost:8080/api/todos/${findId}`)
-      // .then(response => respnse.JSON())
+        axios.get(`http://localhost:8080/api/todos/${findId}`)
+        // .then(response => respnse.JSON())
         .then(response => {
           // console.log("response", response)
           // console.log("id 조회 데이터", response.data)
@@ -102,17 +102,17 @@ function App() {
       }
     }
 
-    const putComplete =(id, completed)=> {    // 완료 여부(checkbox)
+    const putComplete = (id, completed) => {    // 완료 여부(checkbox)
       const completedId = Number(id);
-      const targetTodo = alwaysTodoAry.find((todo) => todo.id === completedId);
+      const findTodo = todoAry.find((todo) => todo.id === completedId);
       axios.put(`http://localhost:8080/api/todos/${completedId}`, {
-        content: targetTodo.content,
+        content: findTodo.content,    // 내용과 날짜는 그대로 완료여부만 반대로
         completed: !completed,
-        createdAt: targetTodo.createdAt,
+        createdAt: findTodo.createdAt,
         // method: 'PUT',
-        headers: { 'Content-Type': 'application/json' }, // 2. "나 JSON 보낸다"
-        // body: JSON.stringify({content: targetTodo.content, completed: !completed, 
-        //   createdAt: targetTodo.createdAt
+        headers: { 'Content-Type': 'application/json' }, // "나 JSON 보낸다"
+        // body: JSON.stringify({content: findTodo.content, completed: !completed,    // Fetch
+        //   createdAt: findTodo.createdAt
         // })
       }) 
       .then((response) => {
@@ -135,6 +135,7 @@ function App() {
       .then(response => 
           // setTodoAry((todoAry) => todoAry.filter((item) => item.id !== deleteId))
       {
+        alert(response.data.content + "를 삭제하였습니다.")
         const afterTodoArray = todoAry.filter(todo => {
             if(todo.id !== response.data.id) {
               return todo
