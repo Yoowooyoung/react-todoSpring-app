@@ -16,7 +16,7 @@ const TodoForm = ({
           <label htmlFor='content'>내용</label>
           <input 
             type="text"
-            placeholder="내용"
+            placeholder="ex.식사"
             className='form-control'
             id="content"
             value={content}
@@ -24,10 +24,9 @@ const TodoForm = ({
             />
         </div>
         <div className='form-group'>
-          <label htmlFor='createdAt'>생성날짜</label>
+          <label htmlFor='createdAt'>날짜</label>
           <input 
             type="date"
-            placeholder="출판날짜"
             className='form-control'
             id="createdAt"
             value={createdAt}

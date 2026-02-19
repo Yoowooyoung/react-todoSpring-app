@@ -4,14 +4,13 @@ import './TodoList.css';
 
 const TodoList = ({
   todos,
-  handleGET,  // 도서 전체 조회
-  handleGetId,  // id 조회
+  handleGET,
+  handleGetId,
   getId,
   onChangeId,
-  handleDelete,   // 삭제
-  putComplete,    // 수정
+  handleDelete,
+  putComplete,
 }) => {
-
   return (
     <React.Fragment>
       <div>
@@ -44,7 +43,6 @@ const TodoList = ({
           return (
             <TodoItem
               todo={todo}
-              
               key={todo.id}
               handleDelete={handleDelete}
               putComplete={putComplete}

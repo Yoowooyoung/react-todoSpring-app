@@ -3,9 +3,8 @@ import './TodoItem.css'
 
 const TodoItem = ({
   todo,
-  handleDelete,   // 삭제
-  // 완료 여부
-  putComplete,    // 완료 여부
+  handleDelete,
+  putComplete,
 }) => {
 
   return (
