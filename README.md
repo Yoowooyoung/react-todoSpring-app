@@ -1,13 +1,9 @@
-Todo 앱 만들기 프로젝트 <br>
+# 프로젝트 설명
+파일명: react-todoSpring-app
+설명: 할 일을 계획해 CRUD기능을 구현한 플래너입니다.
 
-Spring boot와 연동<br>
-
-React_파일명: react-todo-app<br>
-Spring boot_파일명: spring-todo-app
-
-프로젝트 설명: 할 일을 계획해 완료체크를 할 수 있는 플래너입니다.
-
-npm --version 
+# 프로젝트 버전
+Node.js 버전 
 11.6.2
 빌드 도구
 Gradle
@@ -17,11 +13,11 @@ npm intall
 npm run start       // localhost:5173
 
 # 프로젝트 구조
-src/
- ├── App/    # 메인 페이지
- ├── TodoForm/      # 할 일 입력
- ├── TodoList/         # 할 일(전체, id) 조회
- └── TodoItem/         # 할 일 렌더링
+src/<br>
+ ├── App/    # 메인 페이지<br>
+ ├── TodoForm/      # 할 일 입력<br>
+ ├── TodoList/         # 할 일(전체, id) 조회<br>
+ └── TodoItem/         # 할 일 렌더링<br>
 
  # 주요 기능
 1. 할 일 생성하기 Create
