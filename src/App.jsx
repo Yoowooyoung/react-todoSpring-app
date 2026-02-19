@@ -1,22 +1,38 @@
 import './App.css'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ExpenseForm from './components/TodoForm/TodoForm';
 import ExpenseList from "./components/TodoList/TodoList";
+import axios from 'axios';
 
 function App() {
 
-  const [bookAry, setBookAry] = useState([]);
-  const [bookAryTotal, setBookAryTotal] = useState([]);   // 전체 요소
+  const [todoAry, setTodoAry] = useState([]);
+  const [alwaysTodoAry, setAlwaysTodoAry] = useState([]);   // 항상 전체 요소
   const [content, setContent] = useState("");
   const [createdAt, setCreatedAt] = useState("");
 
-    // 처음 사이트로 들어왔을 때
-    fetch('/api/todos')
-      .then(response => response.json())
-      .then(data => {
-      setBookAry(data)
-      setBookAryTotal(data)
+    useEffect(() => {   // 처음 사이트로 들어왔을 때
+    axios.get("http://localhost:8080/api/todos")
+      // .then(response => response.json())
+      .then(response => {
+        // console.log("전체 할 일", response);
+        setTodoAry(response.data);
+        setAlwaysTodoAry(response.data);
       })
+  }, []);   // 처음 사이트 방문 시 빈배열이므로 실행
+
+    // useEffect(() => {
+    //   fetch("http://localhost:8080/api/todos")
+    //   .then(response => {
+    //     console.log("raw response", response)
+    //     return response.json()}
+    //     )
+    //   .then(data => {
+    //     // console.log("전체 할 일", data);
+    //   setTodoAry(data)
+    //   setAlwaysTodoAry(data)
+    //   })
+    // }, []);
 
     // 도서 추가
     const handleContent =(e)=> {  // 내용 입력
@@ -28,16 +44,19 @@ function App() {
     const handlePOST =(e)=> {   // 할 일 추가
       e.preventDefault();
         if(content !== "" && createdAt !== "") {
-          fetch('/api/todos', {
-            method: 'POST',
+          axios.post("http://localhost:8080/api/todos", {
+            content: content,
+            completed: false,
+            createdAt: createdAt,
+            // method: 'POST',
             headers: { 'Content-Type': 'application/json' }, // 2. "나 JSON 보낸다"
-            body: JSON.stringify({ content: content, completed: false, createdAt: createdAt }) // 3. 보낼 내용
+            // body: JSON.stringify({ content: content, completed: false, createdAt: createdAt }) // 3. 보낼 내용
           })
-          .then(res => res.json())
-          .then(data => {
-            const everyAry = [...bookAry, data]   // 추가한 todo 바로 화면에 보이게
-            setBookAry(everyAry)
-            setBookAryTotal(everyAry)
+          // .then(response => response.json())
+          .then(response => {
+            const alwaysAry = [...todoAry, response.data]   // 추가한 todo 바로 화면에 보이게
+            setTodoAry(alwaysAry)
+            setAlwaysTodoAry(alwaysAry)
             setContent("")
             setCreatedAt("")
           })
@@ -48,31 +67,33 @@ function App() {
 
     const handleGET =(e)=> {    // 도서 전체 조회
       e.preventDefault();
-      if(bookAry.length !== 0) {
-      fetch('/api/todos')
-        .then(response => response.json())
-        .then(data => {
-          setBookAry(data)
-          setBookAryCopy(data)
+      if(alwaysTodoAry.length !== 0) {
+      axios.get("http://localhost:8080/api/todos")
+        // .then(response => response.json())
+        .then(response => {
+          console.log(response.data)
+          setTodoAry(response.data)
+          setAlwaysTodoAry(response.data)
         })
-        alert("할 일이 존재합니다.")
       } else {
         alert("할 일이 없습니다.")
       }
     }
 
-    const [getId, setGetId] = useState("");   // 도서 Id 조회
+    const [getId, setGetId] = useState("");   // 할 일 Id 조회
     const onChangeId =(e) => {
       setGetId(e.target.value)
-      console.log("bookAry내용", bookAry)
     }
     const handleGetId =()=> {
       const findId = Number(getId);
-      if(bookAryCopy.find((book) => Number(book.id) === Number(getId))) {   // 숫자로 변환해줘야 숫자간 비교 가능
-      fetch(`/api/todos/${findId}`)
-        .then(response => response.json())
-        .then(data => {
-          setBookAry([data])
+      // console.log(getId);
+      if(alwaysTodoAry.find((todo) => Number(todo.id) === Number(getId))) {   // 숫자로 변환해줘야 숫자간 비교 가능
+      axios.get(`http://localhost:8080/api/todos/${findId}`)
+      // .then(response => respnse.JSON())
+        .then(response => {
+          // console.log("response", response)
+          // console.log("id 조회 데이터", response.data)
+          setTodoAry([response.data])
           setGetId("")
         })
       } else {
@@ -82,44 +103,62 @@ function App() {
     }
 
     const putComplete =(id, completed)=> {    // 완료 여부(checkbox)
-
       const completedId = Number(id);
-      const targetBook = bookAry.find((book) => book.id === completedId);
-
-      fetch(`/api/todos/${completedId}`, {
-        method: 'PUT',
+      const targetTodo = alwaysTodoAry.find((todo) => todo.id === completedId);
+      axios.put(`http://localhost:8080/api/todos/${completedId}`, {
+        content: targetTodo.content,
+        completed: !completed,
+        createdAt: targetTodo.createdAt,
+        // method: 'PUT',
         headers: { 'Content-Type': 'application/json' }, // 2. "나 JSON 보낸다"
-        body: JSON.stringify({content: targetBook.content, completed: !completed, 
-          createdAt: targetBook.createdAt
-        })
+        // body: JSON.stringify({content: targetTodo.content, completed: !completed, 
+        //   createdAt: targetTodo.createdAt
+        // })
       }) 
-      .then(response => response.json())
-      .then((data) => {
-        const afterBookAry = bookAry.map((book) => {
-          if (book.id === completedId) {
-            return data; 
+      .then((response) => {
+        const afterTodoAry = todoAry.map((todo) => {
+          // console.log("put_todo", todo)
+          if (todo.id === completedId) {
+            return response.data; 
           } else {
-            return book;
+            return todo;
           }
         });
-        console.log(afterBookAry)
-        setBookAry(afterBookAry)
+        setTodoAry(afterTodoAry)
       })
     }
   
     const handleDelete=(id)=> {   // 할 일 삭제
       const deleteId = Number(id)
-      fetch(`/api/todos/${deleteId}`, {
-        method: 'DELETE'
+      axios.delete(`http://localhost:8080/api/todos/${deleteId}`, {
       })
-      .then(response => {
-        if(response.ok) {
-          setBookAry((eleBook) => eleBook.filter((item) => item.id !== id))
-        }
-      })
+      .then(response => 
+          // setTodoAry((todoAry) => todoAry.filter((item) => item.id !== deleteId))
+      {
+        const afterTodoArray = todoAry.filter(todo => {
+            if(todo.id !== response.data.id) {
+              return todo
+            }
+          })
+          setTodoAry(afterTodoArray)
+      }
+    )
     }
 
+    // const handleDelete=(id)=> {   // 할 일 삭제
+    //   const deleteId = Number(id)
+    //   fetch(`http://localhost:8080/api/todos/${deleteId}`, {
+    //     method: 'DELETE'
+    //   })
+    //   .then(response => {
+    //     if(response.ok) {
+    //       setTodoAry((todo) => todo.filter((item) => item.id !== id))
+    //     }
+    //   })
+    // }
+
   return (
+    
     <main className="main-container">   
       <h1>플래너</h1>
       <div style={{ width: '100%', backgroundColor: 'white', padding: '1rem'}}>
@@ -131,7 +170,8 @@ function App() {
           handleCreatedAt={handleCreatedAt}
         />
         <ExpenseList 
-          bookAry={bookAry}
+        
+          todoAry={todoAry}
           handleGET={handleGET}
           // id 조회
           handleGetId={handleGetId}

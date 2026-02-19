@@ -2,7 +2,7 @@ import React from 'react'
 import './TodoItem.css'
 
 const TodoItem = ({
-  book,
+  todo,
   handleDelete,   // 삭제
   // 완료 여부
   putComplete,    // 완료 여부
@@ -12,13 +12,13 @@ const TodoItem = ({
     <li className='item'>
       <div className='info'>
         <span>
-          id: {book.id}
+          id: {todo.id}
         </span>
         <span>
-          할 일: {book.content}
+          할 일: {todo.content}
         </span>
         <span>
-          생성 날짜: {book.createdAt}
+          생성 날짜: {todo.createdAt}
         </span>
       </div>
       <div>
@@ -27,14 +27,14 @@ const TodoItem = ({
         <input
           type='checkbox'
           name='completeBtn'
-          checked={book.completed}
-          onChange={() => putComplete(book.id, book.completed)}
+          checked={todo.completed}
+          onChange={() => putComplete(todo.id, todo.completed)}
         />
       </div>
       <div>
         <button
           className='delete-btn'
-          onClick={() => handleDelete(book.id)}
+          onClick={() => handleDelete(todo.id)}
         >
           삭제
         </button>
