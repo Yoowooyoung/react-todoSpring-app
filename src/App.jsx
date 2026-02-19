@@ -88,7 +88,7 @@ function App() {
         completed: !completed,
         createdAt: findTodo.createdAt,
       }) 
-      .then((response) => {
+      .then(response => {
         const afterTodoAry = todos.map((todo) => {
           if (todo.id === completedId) {
             return response.data; 
@@ -104,8 +104,7 @@ function App() {
       const deleteId = Number(id)
       axios.delete(`http://localhost:8080/api/todos/${deleteId}`, {
       })
-      .then((response) => 
-          // setTodoAry((todoAry) => todoAry.filter((item) => item.id !== deleteId))
+      .then(response => 
         {
           alert(response.data.content + "를 삭제하였습니다.")
           const afterTodoArray = todos.filter(todo => {
