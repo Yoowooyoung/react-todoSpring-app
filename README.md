@@ -1,15 +1,13 @@
 # 프로젝트 설명
-파일명: react-todoSpring-app
+파일명: react-todoSpring-app<br>
 설명: 할 일을 계획해 CRUD기능을 구현한 플래너입니다.
 
 # 프로젝트 버전
-Node.js 버전 
-11.6.2
-빌드 도구
-Gradle
+Node.js 버전: 11.6.2<br>
+빌드 도구: Gradle
 
 # 시작 가이드
-npm intall
+npm intall<br>
 npm run start       // localhost:5173
 
 # 프로젝트 구조
